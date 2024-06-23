@@ -10,6 +10,9 @@ module.exports = {
       backgroundImage: {
         'gradient-to-br': 'linear-gradient(to bottom right, #ffa07a, #ff6347)',
       },
+      fontFamily: {
+        cursive: ['"Great Vibes"', 'cursive'], // Add your cursive font here
+      },
     },
   },
   plugins: [],
