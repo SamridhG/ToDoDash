@@ -15,5 +15,16 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '.autofill-text-tomato': {
+          ':-webkit-autofill': {
+            '-webkit-text-fill-color': '#FF6347',
+            'transition': 'background-color 5000s ease-in-out 0s',
+          },
+        },
+      }, ['responsive', 'hover']);
+    },
+  ],
 }
