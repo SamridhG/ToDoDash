@@ -1,7 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword ,onAuthStateChanged} from "firebase/auth";
+import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword ,onAuthStateChanged, signOut} from "firebase/auth";
 import { getFirestore,collection,addDoc,setDoc,doc,getDoc } from "firebase/firestore";
+import { initAuthData } from "../store/authSlice";
+import appStore from "../store/appStore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -53,6 +55,14 @@ const getUserCredential=async (data)=>{
         const docRef = doc(db, "registerUser", data);
         const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
+            const data=docSnap.data()
+           appStore.dispatch(initAuthData({
+              currentUserName:data.name,
+              currentUserEnail:data.email,
+               userUID:data.uid,
+               isLoggedIn:true,
+               isFireBaseInitilize:true
+            }))
         console.log("Document data:", docSnap.data());
 } else {
   // docSnap.data() will be undefined in this case
@@ -65,36 +75,47 @@ const getUserCredential=async (data)=>{
     }
 }
 // login User
-export const loginExistingUser=async(data)=>{
+export const loginExistingUser=async(data,dispatch)=>{
     const {email,password}=data
    try{
        const response=await signInWithEmailAndPassword(auth, email, password)
        console.log("login response",response,response.user.uid)
        const uid=response.user.uid;
-       getUserCredential(uid)
+       getUserCredential(uid,dispatch)
    }catch(error){
     console.log("Sign In Error",error)
    } 
 }
-
-export const currentUserState=(setisAlreadyLoggin)=>{
-   return new Promise((res,rej)=>{
-    onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, (user) => {
         if (user) {
           // User is signed in, see docs for a list of available properties
           // https://firebase.google.com/docs/reference/js/auth.user
           const uid = user.uid;
+          console.log("Already Logged In")
           getUserCredential(uid)
-          console.log("USER LOGG")
-          setisAlreadyLoggin(true)
-          res("exist user")
           // ...
         } else {
           // User is signed out
           // ...
-          setisAlreadyLoggin(false)
-          res("Not Exist user")
+          console.log("Logged Out")
+          appStore.dispatch(initAuthData({
+              currentUserName:null,
+              currentUserEnail:null,
+               userUID:null,
+               isLoggedIn:false,
+               isFireBaseInitilize:true
+          }))
         }
+        //Check Is FireBaseInitilize
+       // !appStore.getState().authSlice.isFireBaseInitilize && appStore.dispatch(initAuthData({
+          
+    //  }))
       });
-   }) 
+
+export const signOutAuth= async ()=>{
+  try{
+    const data= await signOut(auth)
+    console.log("SignOut Data",data)
+  }catch(error){}
+   
 }

@@ -3,9 +3,12 @@ import './App.css';
 import Login from './component/Login';
 import SignUp from './component/SignUp';
 import { RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
+import Profile from './component/Profile';
+import { useSelector } from 'react-redux';
 
 function App() {
    const parentClass="bg-gradient-to-br from-lightTomatoOrange to-tomatoOrange min-h-screen"
+   const initFireBase=useSelector(store=>store.authSlice.isFireBaseInitilize)
   const appRouter=createBrowserRouter([
     {
       path:'/',
@@ -21,13 +24,13 @@ function App() {
     },
     {
       path:'/profile',
-      element:<div>Profile Page</div>
+      element:<Profile/>
     }
 
   ])
   return (
     <div className={parentClass}>
-      <RouterProvider router={appRouter}/>
+      {initFireBase && <RouterProvider router={appRouter}/>}
     </div>
     
   )
