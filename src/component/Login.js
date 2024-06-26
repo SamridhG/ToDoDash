@@ -3,6 +3,7 @@ import { currentUserState, loginExistingUser } from "../config/firebase"
 import SubmitButton from "./SubmitButton"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import { toast } from "react-toastify"
 const Login=()=>{
   const parentClass="flex flex-col relative h-28"
   const labelClass="p-1 absolute top-[-26px] left-5 bg-white text-4xl text-tomatoOrange font-mono"
@@ -24,10 +25,16 @@ const Login=()=>{
         ...userCredential,...{[e.target.name]:e.target.value}
       })
   }
-  const handleSubmit=(event)=>{
+  const handleSubmit= async (event)=>{
          event.preventDefault();
-         loginExistingUser(userCredential)
-        // console.log("Response",userCredential)
+         try{
+           await loginExistingUser(userCredential)
+           toast.success('Login Success!')
+           navigateToProfile()
+         }catch(error){
+            console.log("Rejected Response",error.message)
+            toast.success('Login failed!')
+         }
   }
  const naviagtionToSignUp=()=>{
     navigate('/signUp')

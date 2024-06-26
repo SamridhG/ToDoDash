@@ -40,15 +40,19 @@ const registerUser=async (data)=>{
 }
 
 // create new User
-export const createNewUser=async (data)=>{
-    const {name,email,password}=data
+export const createNewUser=(data)=>{
+  const {name,email,password}=data
+  return new Promise(async (res,rej)=>{
     try{
         const response=await createUserWithEmailAndPassword(auth, email, password)
         console.log("response",response,response.user.uid)
-        registerUser({...data,...{uid:response.user.uid}})
+         await registerUser({...data,...{uid:response.user.uid}})
+         res("Success")
     }catch(error){
        console.log("error in createUser",error.code,error.message)
+       rej("Rejected")
     }
+  })
 }
 const getUserCredential=async (data)=>{
     try{
@@ -75,16 +79,20 @@ const getUserCredential=async (data)=>{
     }
 }
 // login User
-export const loginExistingUser=async(data,dispatch)=>{
+export const loginExistingUser=(data)=>{
     const {email,password}=data
-   try{
-       const response=await signInWithEmailAndPassword(auth, email, password)
-       console.log("login response",response,response.user.uid)
-       const uid=response.user.uid;
-       getUserCredential(uid,dispatch)
-   }catch(error){
-    console.log("Sign In Error",error)
-   } 
+    return new Promise(async (res,rej)=>{
+      try{
+        const response=await signInWithEmailAndPassword(auth, email, password)
+        console.log("login response",response,response.user.uid)
+        const uid=response.user.uid;
+        await getUserCredential(uid)
+        res("resolve")
+    }catch(error){
+     console.log("Sign In Error",error)
+     rej(error)
+    } 
+    })
 }
 onAuthStateChanged(auth, (user) => {
         if (user) {

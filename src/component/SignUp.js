@@ -2,6 +2,7 @@ import SubmitButton from "./SubmitButton"
 import { useState } from "react"
 import { createNewUser } from "../config/firebase"
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 const SignUp=()=>{
   const parentClass="flex flex-col relative h-28"
   const labelClass="p-1 absolute top-[-26px] left-5 bg-white text-4xl text-tomatoOrange font-mono"
@@ -19,14 +20,23 @@ const SignUp=()=>{
                             })
 
   }
-  const handleSubmit=(event)=>{
+  const handleSubmit=async (event)=>{
          event.preventDefault();
-        console.log("Data",userCredential)
-        createNewUser(userCredential)
+       try{
+        await  createNewUser(userCredential)
+        toast.success('SignUp Success!')
+        navigateToProfile()
+      }catch(error){
+         console.log("Rejected Response",error.message)
+         toast.success('Login failed!')
+      }
   }
   const naviagtion=()=>{
     navigate('/login')
  }
+ const navigateToProfile=()=>{
+  navigate('/profile')
+}
   return (
     <div className="min-h-screen flex justify-center items-center">
       <div className="m-4 p-10 bg-white rounded-3xl shadow-red-800 shadow-2xl">
