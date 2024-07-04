@@ -24,6 +24,13 @@ module.exports = {
             'transition': 'background-color 5000s ease-in-out 0s',
           },
         },
+        '.hide-scrollbar::-webkit-scrollbar': {
+          display: 'none',
+        },
+        '.hide-scrollbar': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+        },
       }, ['responsive', 'hover']);
     },
   ],
