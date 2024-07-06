@@ -2,12 +2,15 @@ import { useSelector } from "react-redux";
 import { signOutAuth,createList, getTodoList } from "../config/firebase";
 import { useEffect, useState } from "react";
 import Note from "./Note";
+import { useNavigate } from "react-router-dom";
 const Profile=()=>{
   const userName=useSelector((store)=>store.authSlice.currentUserName)
   const listContent=useSelector((store)=>store.listSlice.list)
   const [search,setSearch]=useState("")
-    const onClick=()=>{
-      signOutAuth()
+  const navigate=useNavigate()
+    const onClick=async ()=>{
+      await signOutAuth()
+      navigate('/')
     }
     const onWriteNote=(value)=>{
         setSearch(value)
@@ -20,7 +23,7 @@ const Profile=()=>{
       getTodoList()
     },[])
     return (
-    <div className="min-h-screen flex justify-center items-center">
+    <div className="min-h-screen flex justify-center items-center relative">
       <div className="m-2 p-6 bg-white rounded-3xl shadow-red-800 shadow-2xl">
            <div className="text-center mb-10 p-2 font-mono font-semibold text-gray-700 text-4xl ">Hey {userName}</div>
            <div className="p-3 flex rounded-lg shadow-gray-500 shadow-lg">
@@ -38,6 +41,12 @@ const Profile=()=>{
            </ul>
            </div>:<></>}
       </div>
+      <button
+          className="absolute top-0 right-0 mt-4 mr-2 p-3 shadow-lg rounded-xl text-tomatoOrange bg-white font-mono text-3xl"
+          onClick={onClick}
+        >
+          Sign Out
+        </button>
     </div>
     )
 } 
