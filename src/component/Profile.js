@@ -1,11 +1,11 @@
 import { useSelector } from "react-redux";
-import { signOutAuth } from "../config/firebase";
-import { useState } from "react";
+import { signOutAuth,createList, getTodoList } from "../config/firebase";
+import { useEffect, useState } from "react";
 import Note from "./Note";
 const Profile=()=>{
   const userName=useSelector((store)=>store.authSlice.currentUserName)
+  const listContent=useSelector((store)=>store.listSlice.list)
   const [search,setSearch]=useState("")
-  const [list,setList]=useState([])
     const onClick=()=>{
       signOutAuth()
     }
@@ -13,9 +13,12 @@ const Profile=()=>{
         setSearch(value)
     }
     const onClickAdd=()=>{
-      setList([...list,search])
+      createList(search)
       setSearch("")
     }
+    useEffect(()=>{
+      getTodoList()
+    },[])
     return (
     <div className="min-h-screen flex justify-center items-center">
       <div className="m-2 p-6 bg-white rounded-3xl shadow-red-800 shadow-2xl">
@@ -27,13 +30,13 @@ const Profile=()=>{
            </input>
            <button className="p-3 w-14 h-[60px] text-3xl text-center bg-tomatoOrange font-bold rounded-md" onClick={onClickAdd}>+</button>
            </div>
-           {list.length>0 &&  <div className="py-2 mt-6  rounded-lg shadow-gray-500 shadow-lg">
+           {listContent.length>0 ?  <div className="py-2 mt-6  rounded-lg shadow-gray-500 shadow-lg">
             <ul className="p-3 w-[560px] max-h-[600px] overflow-y-auto hide-scrollbar">
-            {list.map((element)=>(
-              <li><Note text={element}/></li>
+            {listContent.map((element)=>(
+             <li key={element.id}><Note detail={element}/></li>
             ))}
            </ul>
-           </div>}
+           </div>:<></>}
       </div>
     </div>
     )

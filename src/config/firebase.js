@@ -1,8 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword ,onAuthStateChanged, signOut} from "firebase/auth";
-import { getFirestore,collection,addDoc,setDoc,doc,getDoc } from "firebase/firestore";
+import { getFirestore,collection,addDoc,setDoc,doc,getDoc,deleteDoc, getDocs } from "firebase/firestore";
 import { initAuthData } from "../store/authSlice";
+import { updatelist } from "../store/listSlice";
 import appStore from "../store/appStore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -127,3 +128,45 @@ export const signOutAuth= async ()=>{
   }catch(error){}
    
 }
+export const createList=async (note)=>{
+  try {
+    let data={
+      notetag:note,
+      id:generateUniqueId()
+    }
+    const response=await setDoc(doc(db, `registerUser/${appStore.getState().authSlice.userUID}/ToDoContent/${data.id}`), data);
+    console.log('Document successfully written!');
+  } catch (e) {
+    console.error('Error writing document: ', e);
+  }
+  getTodoList()
+}
+const generateUniqueId=()=>{
+  const timestamp = Date.now().toString(36); // Convert the current timestamp to a base-36 string
+  const randomString = Math.random().toString(36).substring(2, 6); // Generate a random string and get the first 4 characters
+
+  return (timestamp + randomString).substring(0, 8); // Concatenate and get the first 8 characters
+}
+export const deleteNote=async (docId)=>{
+    try {
+      // Reference to the document to be deleted
+      const docRef = doc(db, `registerUser/${appStore.getState().authSlice.userUID}/ToDoContent`, docId);
+      // Delete the document
+      await deleteDoc(docRef);
+      console.log(`Document with ID ${docId} successfully deleted from collection`);
+    } catch (e) {
+      console.error('Error deleting document: ', e);
+    }
+    getTodoList()
+  }
+export const getTodoList=async ()=>{
+          const  docRef=collection(db,`registerUser/${appStore.getState().authSlice.userUID}/ToDoContent`)
+          const docSnap = await getDocs(docRef);
+          let newlist=[]
+          const documents = docSnap.docs.map(doc => {
+            newlist.push(doc.data())
+          }
+          );
+          appStore.dispatch(updatelist(newlist))
+}  
+
