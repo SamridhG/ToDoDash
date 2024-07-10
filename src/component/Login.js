@@ -11,6 +11,7 @@ const Login=()=>{
   const navigate=useNavigate()
   const [componentmount,setcomponentmount]=useState(false)
   const authCred=useSelector((store)=>store.authSlice)
+  const [loader,setLoader]=useState(false)
   useEffect(()=>{
         authCred.isLoggedIn && navigateToProfile();
         setcomponentmount(true)
@@ -27,6 +28,12 @@ const Login=()=>{
   }
   const handleSubmit= async (event)=>{
          event.preventDefault();
+         setLoader(true)
+         if(userCredential.password.length===0 || userCredential.email.length===0){
+          toast.warning('Wrong Credential!')
+          setLoader(false)
+          return
+         }
          try{
            await loginExistingUser(userCredential)
            toast.success('Login Success!')
@@ -34,6 +41,8 @@ const Login=()=>{
          }catch(error){
             console.log("Rejected Response",error.message)
             toast.success('Login failed!')
+         }finally{
+          setLoader(false)
          }
   }
  const naviagtionToSignUp=()=>{
@@ -56,7 +65,7 @@ const Login=()=>{
        <label className={labelClass}>Password</label>
        <input className={inputClass} name="password" type="password" onChange={onSetupCred}></input>
        </div>
-       <div type="submit" className="flex flex-row-reverse">
+       <div type="submit" className={`flex flex-row-reverse ${loader?'opacity-50 pointer-events-none' : '' }`} >
        <SubmitButton data={{tag:"Login"}}/>
        </div>
       </form>

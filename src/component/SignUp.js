@@ -12,6 +12,7 @@ const SignUp=()=>{
     email:'',
     password:''
   })
+  const [loader,setLoader]=useState(false)
   const navigate=useNavigate()
   const onSetupCred=(e)=>{
         //  console.log("listen",e.target)
@@ -22,6 +23,12 @@ const SignUp=()=>{
   }
   const handleSubmit=async (event)=>{
          event.preventDefault();
+         setLoader(true)
+         if(userCredential.password.length===0 || userCredential.email.length===0 || userCredential.name.length===0){
+          toast.warning('Wrong Credential!')
+          setLoader(false)
+          return
+         }
        try{
         await  createNewUser(userCredential)
         toast.success('SignUp Success!')
@@ -29,6 +36,8 @@ const SignUp=()=>{
       }catch(error){
          console.log("Rejected Response",error.message)
          toast.success('Login failed!')
+      }finally{
+        setLoader(false)
       }
   }
   const naviagtion=()=>{
@@ -54,7 +63,7 @@ const SignUp=()=>{
        <label className={labelClass}>Password</label>
        <input className={inputClass} type="password" name="password" onChange={onSetupCred}></input>
        </div>
-       <div type="submit" className="flex flex-row-reverse">
+       <div type="submit" className={`flex flex-row-reverse ${loader?'opacity-50 pointer-events-none' : '' }`}>
        <SubmitButton data={{tag:"Sign Up"}}/>
        </div>
       </form>
