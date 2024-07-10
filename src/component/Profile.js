@@ -15,8 +15,15 @@ const Profile=()=>{
     const onWriteNote=(value)=>{
         setSearch(value)
     }
+    const processInput=(input)=> {
+      const trimmedInput = input.trimStart();
+      return trimmedInput.length > 0 ? trimmedInput : null;
+    }
     const onClickAdd=()=>{
-      createList(search)
+      let val=processInput(search)
+      if(val){
+        createList(val)
+      }
       setSearch("")
     }
     useEffect(()=>{
