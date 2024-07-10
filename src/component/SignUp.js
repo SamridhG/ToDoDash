@@ -6,7 +6,7 @@ import { toast } from "react-toastify"
 const SignUp=()=>{
   const parentClass="flex flex-col relative h-28"
   const labelClass="p-1 absolute top-[-26px] left-5 bg-white text-4xl text-tomatoOrange font-mono"
-  const inputClass="p-4 h-20 bg-white border border-tomatoOrange rounded-lg text-5xl font-extralight text-tomatoOrange font-mono focus:border-tomatoOrange focus:outline-none autofill-text-tomato"
+  const inputClass="p-4 h-20 bg-white border border-tomatoOrange rounded-lg text-3xl font-extralight text-tomatoOrange font-mono focus:border-tomatoOrange focus:outline-none autofill-text-tomato"
   const [userCredential,setuserCredential]=useState({
     name:"",
     email:'',
