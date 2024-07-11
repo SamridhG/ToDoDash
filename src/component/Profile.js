@@ -26,6 +26,7 @@ const Profile=()=>{
       }
       setSearch("")
     }
+    console.log("Check")
     useEffect(()=>{
       getTodoList()
     },[])

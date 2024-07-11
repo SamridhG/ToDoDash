@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword ,onAuthStateChanged, signOut} from "firebase/auth";
-import { getFirestore,collection,addDoc,setDoc,doc,getDoc,deleteDoc, getDocs } from "firebase/firestore";
+import { getFirestore,collection,addDoc,setDoc,doc,getDoc,deleteDoc, getDocs,query,onSnapshot } from "firebase/firestore";
 import { initAuthData } from "../store/authSlice";
 import { updatelist } from "../store/listSlice";
 import appStore from "../store/appStore";
@@ -139,7 +139,6 @@ export const createList=async (note)=>{
   } catch (e) {
     console.error('Error writing document: ', e);
   }
-  getTodoList()
 }
 const generateUniqueId=()=>{
   const timestamp = Date.now().toString(36); // Convert the current timestamp to a base-36 string
@@ -157,16 +156,17 @@ export const deleteNote=async (docId)=>{
     } catch (e) {
       console.error('Error deleting document: ', e);
     }
-    getTodoList()
   }
 export const getTodoList=async ()=>{
+  // here we use listner , real time listner for change in collection
           const  docRef=collection(db,`registerUser/${appStore.getState().authSlice.userUID}/ToDoContent`)
-          const docSnap = await getDocs(docRef);
-          let newlist=[]
-          const documents = docSnap.docs.map(doc => {
-            newlist.push(doc.data())
-          }
-          );
+          onSnapshot(docRef,(querySnapshot)=>{
+           let newlist=[]
+          querySnapshot.forEach((doc)=>{
+             console.log("doc===>",doc.data())
+             newlist.push(doc.data())
+          })
           appStore.dispatch(updatelist(newlist))
+         })
 }  
 
